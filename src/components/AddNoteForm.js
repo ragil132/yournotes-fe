@@ -20,7 +20,7 @@ const AddNoteForm = () => {
     };
     const fetchData = async () => {
       const response = await fetch(
-        "process.env.REACT_APP_API_URL/note",
+        `${process.env.REACT_APP_API_URL}/note`,
         options
       );
       if (response.ok) {

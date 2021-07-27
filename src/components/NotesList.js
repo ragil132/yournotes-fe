@@ -34,7 +34,7 @@ const NotesList = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await fetch("process.env.REACT_APP_API_URL/notes");
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/notes`);
       const data = await response.json();
       setNotes({ data });
     };

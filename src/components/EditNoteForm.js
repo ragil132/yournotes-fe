@@ -41,7 +41,7 @@ const EditNoteForm = () => {
     };
     const submitData = async () => {
       const response = await fetch(
-        `process.env.REACT_APP_API_URL/note/${currentNote._id}`,
+        `${process.env.REACT_APP_API_URL}/note/${currentNote._id}`,
         options
       );
       if (response.ok) {
