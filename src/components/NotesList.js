@@ -1,7 +1,9 @@
 /* eslint-disable no-underscore-dangle */
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { getAllNotes, fetchNotes } from "../features/notes/notesSlice";
 
 const NotesListContainer = styled.div`
   display: flex;
@@ -30,35 +32,36 @@ const Separator = styled.hr`
 `;
 
 const NotesList = () => {
-  const [notes, setNotes] = useState(null);
-
+  const dispatch = useDispatch();
+  const notes = useSelector(getAllNotes);
+  const notesStatus = useSelector((state) => state.notes.status);
+  const error = useSelector((state) => state.notes.error);
   useEffect(() => {
-    const fetchData = async () => {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/notes`);
-      const data = await response.json();
-      setNotes({ data });
-    };
-
-    fetchData();
-  }, []);
-
-  const listItems =
-    notes &&
-    notes.data.map((note) => (
-      <ListItem key={note._id}>
-        <h4>
-          <Link to={`/edit/${note._id}`}>{note.title}</Link>
-        </h4>
-        <p>{note.note.slice(0, 101)}</p>
-        <Separator />
-      </ListItem>
-    ));
-
-  return (
-    <NotesListContainer>
-      <List>{listItems}</List>
-    </NotesListContainer>
-  );
+    if (notesStatus === "idle") {
+      dispatch(fetchNotes());
+    }
+  }, [notesStatus, dispatch]);
+  let content;
+  if (notesStatus === "loading") {
+    content = <div>Loading...</div>;
+  } else if (notesStatus === "succeeded") {
+    content = (
+      <List>
+        {notes.map((note) => (
+          <ListItem key={note._id}>
+            <h4>
+              <Link to={`/edit/${note._id}`}>{note.title}</Link>
+            </h4>
+            <p>{note.note.slice(0, 101)}</p>
+            <Separator />
+          </ListItem>
+        ))}
+      </List>
+    );
+  } else if (notesStatus === "failed") {
+    content = <div>{error}</div>;
+  }
+  return <NotesListContainer>{content}</NotesListContainer>;
 };
 
 export default NotesList;

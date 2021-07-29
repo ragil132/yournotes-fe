@@ -1,9 +1,14 @@
+/* eslint-disable no-console */
 import React, { useState } from "react";
+import { unwrapResult } from "@reduxjs/toolkit";
+import { useDispatch } from "react-redux";
+import { addNewNote, statusReset } from "../features/notes/notesSlice";
 import { Form, FormGroup, Label, Input, TextArea } from "./ui/Forms";
 import Button from "./ui/Button";
 import InfoWrapper from "./ui/InfoWrapper";
 
 const AddNoteForm = () => {
+  const dispatch = useDispatch();
   const [state, setState] = useState({ title: "", note: "" });
   const [isSuccess, setIsSuccess] = useState(null);
   const handleTitleChange = (e) => {
@@ -12,26 +17,26 @@ const AddNoteForm = () => {
   const handleNoteChange = (e) => {
     setState({ ...state, note: e.target.value });
   };
-  const handleSubmit = (e) => {
-    const options = {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(state),
-    };
-    const fetchData = async () => {
-      const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/note`,
-        options
-      );
-      if (response.ok) {
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const actionResult = await dispatch(addNewNote(state));
+      const result = unwrapResult(actionResult);
+      if (result) {
         setIsSuccess(true);
       } else {
         setIsSuccess(false);
       }
-    };
-    fetchData();
-    e.preventDefault();
+    } catch (err) {
+      console.error("Terjadi kesalahan: ", err);
+      setIsSuccess(false);
+    } finally {
+      dispatch(statusReset());
+    }
   };
+
   const { title, note } = state;
   return (
     <>

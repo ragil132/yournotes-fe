@@ -5,22 +5,20 @@ import AddPage from "./pages/Add";
 import EditPage from "./pages/Edit";
 import Container from "./components/ContainerApp";
 
-function App() {
-  return (
-    <Container>
-      <Switch>
-        <Route path="/add">
-          <AddPage />
-        </Route>
-        <Route path="/edit/:id">
-          <EditPage />
-        </Route>
-        <Route path="/">
-          <HomePage />
-        </Route>
-      </Switch>
-    </Container>
-  );
-}
+const App = () => (
+  <Container>
+    <Switch>
+      <Route path="/add">
+        <AddPage />
+      </Route>
+      <Route path="/edit/:id">
+        <EditPage />
+      </Route>
+      <Route path="/">
+        <HomePage />
+      </Route>
+    </Switch>
+  </Container>
+);
 
 export default App;

@@ -1,13 +1,25 @@
+/* eslint-disable no-console */
+/* eslint-disable no-undef */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable no-shadow */
 import React, { useEffect, useState } from "react";
 import { useLocation, useHistory } from "react-router-dom";
+import { unwrapResult } from "@reduxjs/toolkit";
+import { useDispatch } from "react-redux";
+import {
+  updateExistingNote,
+  deleteNote,
+  statusReset,
+} from "../features/notes/notesSlice";
 import { Form, FormGroup, Label, Input, TextArea } from "./ui/Forms";
 import Button from "./ui/Button";
 import InfoWrapper from "./ui/InfoWrapper";
 
+require("dotenv").config();
+
 const EditNoteForm = () => {
+  const dispatch = useDispatch();
   const location = useLocation();
   const history = useHistory();
   const [currentNote, setCurrentNote] = useState({ title: "", note: "" });
@@ -33,42 +45,43 @@ const EditNoteForm = () => {
     setCurrentNote({ ...currentNote, note: e.target.value });
   };
 
-  const handleSubmit = (e) => {
-    const options = {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(currentNote),
-    };
-    const submitData = async () => {
-      const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/note/${currentNote._id}`,
-        options
-      );
-      if (response.ok) {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const actionResult = await dispatch(updateExistingNote(currentNote));
+      const result = unwrapResult(actionResult);
+      if (result) {
         setIsSuccess(true);
       } else {
         setIsSuccess(false);
       }
-    };
-    submitData();
-    e.preventDefault();
+    } catch (err) {
+      console.error("Terjadi kesalahan: ", err);
+      setIsSuccess(false);
+    } finally {
+      dispatch(statusReset());
+    }
   };
 
-  const handleDeleteNote = () => {
-    const options = {
-      method: "DELETE",
-      headers: { "Content-Type": "application/json" },
-    };
-    const deleteData = async () => {
-      const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/note/${currentNote._id}`,
-        options
-      );
-      if (response.ok) {
-        history.push("/");
+  const handleDeleteNote = async (e) => {
+    e.preventDefault();
+
+    try {
+      const actionResult = await dispatch(deleteNote(currentNote));
+      const result = unwrapResult(actionResult);
+      if (result) {
+        setIsSuccess(true);
+      } else {
+        setIsSuccess(false);
       }
-    };
-    deleteData();
+    } catch (err) {
+      console.error("Terjadi kesalahan: ", err);
+      setIsSuccess(false);
+    } finally {
+      dispatch(statusReset());
+      history.push("/");
+    }
   };
 
   const { title, note } = currentNote;
