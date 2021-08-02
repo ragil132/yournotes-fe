@@ -1,39 +1,22 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable no-underscore-dangle */
-import React, { useEffect } from "react";
-import styled from "styled-components";
+import React, { useEffect, useState } from "react";
+import tw from "twin.macro";
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { getAllNotes, fetchNotes } from "../features/notes/notesSlice";
+import { getFilteredNotes, fetchNotes } from "../features/notes/notesSlice";
+import SearchBar from "./ui/SearchBar";
+import Container from "./ui/Container";
+import { DropdownMenu, Toolbar } from "./ui/DropdownMenu";
 
-const NotesListContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  min-width: 30vw;
-  text-align: left;
-  margin: 1rem;
-  padding: 1rem;
-  border: 2px solid #a0aec0;
-  border-radius: 5px;
-`;
-
-const List = styled.ul`
-  list-style: none;
-`;
-
-const ListItem = styled.li`
-  margin: 0.5rem;
-`;
-
-const Separator = styled.hr`
-  width: 90%;
-  margin: -1px;
-  background-color: #edf2f7;
-  color: #edf2f7;
-`;
+const NotesListContainer = tw.div`grid grid-cols-1 md:grid-cols-3 gap-4 my-8`;
+const Card = tw.div`text-left p-4 border rounded-md`;
+const Title = tw.h4`text-lg font-semibold text-purple-900`;
 
 const NotesList = () => {
+  const [keyword, setKeyword] = useState("");
   const dispatch = useDispatch();
-  const notes = useSelector(getAllNotes);
+  const notes = useSelector((state) => getFilteredNotes(state, keyword));
   const notesStatus = useSelector((state) => state.notes.status);
   const error = useSelector((state) => state.notes.error);
   useEffect(() => {
@@ -41,27 +24,35 @@ const NotesList = () => {
       dispatch(fetchNotes());
     }
   }, [notesStatus, dispatch]);
+
+  const handleChange = (e) => {
+    setKeyword(e.target.value);
+  };
+
   let content;
   if (notesStatus === "loading") {
     content = <div>Loading...</div>;
   } else if (notesStatus === "succeeded") {
-    content = (
-      <List>
-        {notes.map((note) => (
-          <ListItem key={note._id}>
-            <h4>
-              <Link to={`/edit/${note._id}`}>{note.title}</Link>
-            </h4>
-            <p>{note.note.slice(0, 101)}</p>
-            <Separator />
-          </ListItem>
-        ))}
-      </List>
-    );
+    content = notes.map((note) => (
+      <Card key={note._id}>
+        <Title>
+          <Link to={`/edit/${note._id}`}>{note.title}</Link>
+        </Title>
+        <p>{note.note.slice(0, 101)}</p>
+      </Card>
+    ));
   } else if (notesStatus === "failed") {
     content = <div>{error}</div>;
   }
-  return <NotesListContainer>{content}</NotesListContainer>;
+  return (
+    <Container>
+      <Toolbar>
+        <SearchBar placeholder="Search Notes..." onChange={handleChange} />
+        <DropdownMenu />
+      </Toolbar>
+      <NotesListContainer>{content}</NotesListContainer>
+    </Container>
+  );
 };
 
 export default NotesList;

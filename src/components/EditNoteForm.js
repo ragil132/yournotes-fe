@@ -7,12 +7,14 @@ import React, { useEffect, useState } from "react";
 import { useLocation, useHistory } from "react-router-dom";
 import { unwrapResult } from "@reduxjs/toolkit";
 import { useDispatch } from "react-redux";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSave, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import {
   updateExistingNote,
   deleteNote,
   statusReset,
 } from "../features/notes/notesSlice";
-import { Form, FormGroup, Label, Input, TextArea } from "./ui/Forms";
+import { Form, FormGroup, FormButtonGroup, Input, TextArea } from "./ui/Forms";
 import Button from "./ui/Button";
 import InfoWrapper from "./ui/InfoWrapper";
 
@@ -91,7 +93,6 @@ const EditNoteForm = () => {
       <InfoWrapper status={isSuccess} />
       <Form onSubmit={handleSubmit}>
         <FormGroup>
-          <Label>Title</Label>
           <Input
             type="text"
             name="title"
@@ -100,7 +101,6 @@ const EditNoteForm = () => {
           />
         </FormGroup>
         <FormGroup>
-          <Label>Note</Label>
           <TextArea
             name="note"
             rows="12"
@@ -108,12 +108,14 @@ const EditNoteForm = () => {
             onChange={handleNoteChange}
           />
         </FormGroup>
-        <FormGroup>
-          <Button type="submit">Save</Button>
-          <Button danger onClick={handleDeleteNote}>
-            Delete
+        <FormButtonGroup>
+          <Button type="submit">
+            <FontAwesomeIcon icon={faSave} /> &nbsp; Save
           </Button>
-        </FormGroup>
+          <Button danger onClick={handleDeleteNote}>
+            <FontAwesomeIcon icon={faTrashAlt} /> &nbsp; Delete
+          </Button>
+        </FormButtonGroup>
       </Form>
     </>
   );

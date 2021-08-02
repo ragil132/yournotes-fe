@@ -1,18 +1,12 @@
 /* eslint-disable jsx-a11y/accessible-emoji */
 /* eslint-disable react/prop-types */
 import React from "react";
-import styled from "styled-components";
+import tw, { styled } from "twin.macro";
 
-const MessageContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  margin: 0.5rem;
-  padding: 0 1rem;
-  border: 2px solid ${(props) => (props.danger ? "#F56565" : "#68d391")};
-  border-radius: 5px;
-`;
+const MessageContainer = styled.div(({ danger }) => [
+  danger ? tw`border-red-500` : tw`border-green-500`,
+  tw`flex flex-col items-center justify-center m-4 p-4 border-2 rounded`,
+]);
 
 const Message = (props) => {
   const { text, type } = props;

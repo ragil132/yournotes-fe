@@ -75,12 +75,39 @@ export const deleteNote = createAsyncThunk(
   }
 );
 
+export const getFilteredNotes = (state, keyword) => {
+  if (keyword) {
+    const isKeywordExist = (array, string) =>
+      array.toLowerCase().includes(string);
+
+    return state.notes.data.filter(
+      (note) =>
+        isKeywordExist(note.note, keyword) ||
+        isKeywordExist(note.title, keyword)
+    );
+  }
+  return state.notes.data;
+};
+
 const notesSlice = createSlice({
   name: "notes",
   initialState,
   reducers: {
     statusReset(state, action) {
       state.status = "idle";
+    },
+    updateSort(state, action) {
+      if (action.payload === "oldest") {
+        state.data = state.data.sort(
+          (a, b) =>
+            new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime()
+        );
+      } else if (action.payload === "newest") {
+        state.data = state.data.sort(
+          (a, b) =>
+            new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+        );
+      }
     },
   },
   extraReducers: {
@@ -143,6 +170,6 @@ export const getAllNotes = (state) => state.notes.data;
 export const getNoteById = (state, noteId) =>
   state.notes.data.find((note) => note.id === noteId);
 
-export const { statusReset } = notesSlice.actions;
+export const { statusReset, updateSort } = notesSlice.actions;
 
 export default notesSlice.reducer;

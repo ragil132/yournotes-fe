@@ -2,8 +2,10 @@
 import React, { useState } from "react";
 import { unwrapResult } from "@reduxjs/toolkit";
 import { useDispatch } from "react-redux";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSave } from "@fortawesome/free-solid-svg-icons";
 import { addNewNote, statusReset } from "../features/notes/notesSlice";
-import { Form, FormGroup, Label, Input, TextArea } from "./ui/Forms";
+import { Form, FormGroup, FormButtonGroup, Input, TextArea } from "./ui/Forms";
 import Button from "./ui/Button";
 import InfoWrapper from "./ui/InfoWrapper";
 
@@ -43,26 +45,28 @@ const AddNoteForm = () => {
       <InfoWrapper status={isSuccess} />
       <Form onSubmit={handleSubmit}>
         <FormGroup>
-          <Label>Title</Label>
           <Input
             type="text"
             name="title"
+            placeholder="Title"
             value={title}
             onChange={handleTitleChange}
           />
         </FormGroup>
         <FormGroup>
-          <Label>Note</Label>
           <TextArea
             name="note"
             rows="12"
+            placeholder="Your content goes here.."
             value={note}
             onChange={handleNoteChange}
           />
         </FormGroup>
-        <FormGroup>
-          <Button type="submit">Add</Button>
-        </FormGroup>
+        <FormButtonGroup>
+          <Button type="submit">
+            <FontAwesomeIcon icon={faSave} /> &nbsp; Save
+          </Button>
+        </FormButtonGroup>
       </Form>
     </>
   );

@@ -1,7 +1,5 @@
-import styled from "styled-components";
+import tw from "twin.macro";
 
-const Container = styled.div`
-  text-align: center;
-`;
+const Container = tw.div`text-center`;
 
 export default Container;

@@ -1,17 +1,38 @@
 import React from "react";
-import styled from "styled-components";
+import tw from "twin.macro";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faFile } from "@fortawesome/free-solid-svg-icons";
+import { Link } from "react-router-dom";
+import Button from "../ui/Button";
 import logo from "../../assets/images/logo_transparent.png";
 
-const Container = styled.div`
-  margin: 1rem;
-  padding: 0.5rem;
-`;
+const Navigation = tw.div`
+    flex 
+    justify-between items-center 
+    border-b-2 border-gray-100 
+    py-6 
+    md:justify-start md:space-x-3
+    `;
+const Img = tw.img`h-14 w-auto sm:h-16`;
+const Heading = tw.h2`
+    invisible 
+    text-xl font-bold text-gray-900 
+    md:visible`;
+const Menu = tw.div`md:flex items-center justify-end md:flex-1 lg:w-0`;
 
 const Header = () => (
-  <Container>
-    <img src={logo} width="100px" alt="logo" />
-    <h1>YourNotes App</h1>
-  </Container>
+  <Navigation>
+    <Img src={logo} alt="logo" />
+    <Heading>YourNotes App</Heading>
+    <Menu>
+      <Link to="/add">
+        <Button>
+          <FontAwesomeIcon icon={faFile} />
+          &nbsp;&nbsp; New Note
+        </Button>
+      </Link>
+    </Menu>
+  </Navigation>
 );
 
 export default Header;
