@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-use-before-define */
 /* eslint-disable no-console */
 /* eslint-disable no-undef */
 /* eslint-disable react-hooks/exhaustive-deps */
@@ -25,19 +27,26 @@ const EditNoteForm = () => {
   const location = useLocation();
   const history = useHistory();
   const [currentNote, setCurrentNote] = useState({ title: "", note: "" });
-  const [isSuccess, setIsSuccess] = useState(null);
 
   useEffect(() => {
-    const noteId = location.pathname.replace("/edit/", "");
-    const fetchData = async () => {
-      const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/note/${noteId}`
-      );
+    const noteId = location.pathname.replace('/edit/', '');
+    async function fetchData() {
+      const user = JSON.parse(localStorage.getItem('user'));
+      const requestOptions = {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+          'Content-Type': 'application/json'
+        }
+      };
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/note/${noteId}`, requestOptions);
       const data = await response.json();
       setCurrentNote(data);
-    };
+    }
+
     fetchData();
   }, []);
+  const [isSuccess, setIsSuccess] = useState(null);
 
   const handleTitleChange = (e) => {
     setCurrentNote({ ...currentNote, title: e.target.value });

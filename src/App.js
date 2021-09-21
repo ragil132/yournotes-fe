@@ -4,6 +4,8 @@ import { GlobalStyles } from "twin.macro";
 import HomePage from "./pages/Home";
 import AddPage from "./pages/Add";
 import EditPage from "./pages/Edit";
+import RegisterPage from './pages/Register';
+import LoginPage from './pages/Login';
 import Container from "./components/ContainerApp";
 
 const App = () => (
@@ -11,6 +13,12 @@ const App = () => (
     <GlobalStyles />
     <Container>
       <Switch>
+      <Route path="/register">
+          <RegisterPage />
+        </Route>
+        <Route path="/login">
+          <LoginPage />
+        </Route>
         <Route path="/add">
           <AddPage />
         </Route>

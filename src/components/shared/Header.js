@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import tw from "twin.macro";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFile } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
 import Button from "../ui/Button";
+import Modal from '../ui/Modal';
 import logo from "../../assets/images/logo_transparent.png";
 
 const Navigation = tw.div`
@@ -20,19 +21,28 @@ const Heading = tw.h2`
     md:visible`;
 const Menu = tw.div`md:flex items-center justify-end md:flex-1 lg:w-0`;
 
-const Header = () => (
-  <Navigation>
-    <Img src={logo} alt="logo" />
-    <Heading>YourNotes App</Heading>
-    <Menu>
-      <Link to="/add">
-        <Button>
-          <FontAwesomeIcon icon={faFile} />
+const Header = () => {
+  const [visible, setVisible] = useState(false);
+  const handleClick = () => {
+    setVisible(!visible);
+  };
+  return (
+    <>
+      {visible && <Modal close={handleClick} />}
+      <Navigation>
+        <Img src={logo} alt="logo" onClick={handleClick} />
+        <Heading>YourNotes App</Heading>
+        <Menu>
+          <Link to="/add">
+            <Button>
+              <FontAwesomeIcon icon={faFile} />
           &nbsp;&nbsp; New Note
         </Button>
-      </Link>
-    </Menu>
-  </Navigation>
-);
+          </Link>
+        </Menu>
+      </Navigation>
+    </>
+  );
+};
 
 export default Header;

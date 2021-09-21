@@ -5,23 +5,40 @@
 /* eslint-disable no-unused-vars */
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
+const user = JSON.parse(localStorage.getItem('user'));
+
 require("dotenv").config();
 
 const initialState = { data: [], status: "idle", error: null };
 
 export const fetchNotes = createAsyncThunk("notes/fetchNotes", async () => {
-  const response = await fetch(`${process.env.REACT_APP_API_URL}/notes`);
-  const data = await response.json();
-  return data;
+  const requestOptions = {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${user.token}`,
+      'Content-Type': 'application/json'
+    }
+  };
+
+  const response = await fetch(`${process.env.REACT_APP_API_URL}/notes`, requestOptions);
+  if (response.ok) {
+    const data = await response.json();
+    return data;
+  }
+  throw Error(response.statusText);
+
 });
 
 export const addNewNote = createAsyncThunk(
   "notes/AddNewNote",
   async (initialNotes) => {
     const requestOptions = {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(initialNotes),
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${user.token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(initialNotes)
     };
 
     const response = await fetch(
@@ -29,11 +46,12 @@ export const addNewNote = createAsyncThunk(
       requestOptions
     );
     if (response.ok) {
-      const data = response;
+      const data = await response.json();
       const noteAdded = { ...initialNotes, _id: data._id };
       return noteAdded;
     }
-    return null;
+    throw Error(response.statusText);
+
   }
 );
 
@@ -42,7 +60,7 @@ export const updateExistingNote = createAsyncThunk(
   async (currentNote) => {
     const requestOptions = {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      headers: { Authorization: `Bearer ${user.token}`, 'Content-Type': 'application/json' },
       body: JSON.stringify(currentNote),
     };
 
@@ -53,7 +71,7 @@ export const updateExistingNote = createAsyncThunk(
     if (response.ok) {
       return currentNote;
     }
-    return null;
+    throw Error(response.statusText);
   }
 );
 
@@ -62,7 +80,7 @@ export const deleteNote = createAsyncThunk(
   async (currentNote) => {
     const requestOptions = {
       method: "DELETE",
-      headers: { "Content-Type": "application/json" },
+      headers: { Authorization: `Bearer ${user.token}`, 'Content-Type': 'application/json' }
     };
 
     const response = await fetch(
