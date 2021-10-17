@@ -28,6 +28,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
+  "author": "Ragillio Aji",
   "eslintConfig": {
     "extends": [
       "react-app",
